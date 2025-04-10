@@ -19,7 +19,7 @@ import RecipientList from '~/components/RecipientList';
 import { RECIPIENT_OPTIONS } from '~/constant';
 import { RecipientInfo, RecipientListType } from '~/types';
 import { AppDispatch } from './store';
-import { setTransactionAccInfo } from './features/transaction/transactionSlice';
+import { resetTransactionInfo, setTransactionAccInfo } from './features/transaction/transactionSlice';
 
 const RecipientSelectionScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,7 +37,7 @@ const RecipientSelectionScreen: React.FC = () => {
   const sliderPosition = new Animated.Value(0);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const handleTabChange = (index: number) => {
+  const handleTabChange = (index: number): void => {
     setSelectedTab(index);
 
     // Animate the slider position based on selected tab
@@ -48,7 +48,7 @@ const RecipientSelectionScreen: React.FC = () => {
     }).start();
   };
 
-  const selectAccType = (type: number) => {
+  const selectAccType = (type: number): void => {
     dispatch(setTransactionAccInfo({
       accType: type,
     }))
@@ -60,7 +60,7 @@ const RecipientSelectionScreen: React.FC = () => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  const handleSelectRecipient = (recipient: RecipientInfo) => {
+  const handleSelectRecipient = (recipient: RecipientInfo): void => {
     dispatch(setTransactionAccInfo({
       accType: recipient.type,
       accNo: recipient.accountNo,
@@ -71,6 +71,11 @@ const RecipientSelectionScreen: React.FC = () => {
     navigation.navigate('TransferDetailForm');
   }
 
+  const handleClose = (): void => {
+    dispatch(resetTransactionInfo());
+    navigation.goBack();
+  }
+
   return (
     <GestureHandlerRootView>
       <BottomSheetModalProvider>
@@ -79,7 +84,7 @@ const RecipientSelectionScreen: React.FC = () => {
             <Text className={styles.headerText}>Transfer To</Text>
             <View className={styles.closeIconContainer}>
               <TouchableOpacity
-                onPress={() => navigation.goBack()}
+                onPress={handleClose}
                 className={styles.closeIcon}
               >
                 <MaterialCommunityIcons name='close' size={25} />

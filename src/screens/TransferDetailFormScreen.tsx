@@ -14,13 +14,16 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ActionButton from '~/components/ActionButton';
 import { BANK_OPTIONS } from '~/constant';
 import { Balance, BankType, Transaction } from '~/types';
 import CustomTextInput from '~/components/CustomTextInput';
+import { resetTransactionInfo, setTransactionAccInfo } from './features/transaction/transactionSlice';
+import { AppDispatch } from './store';
 
 const TransferDetailFormScreen: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<NavigationProp<any>>();
   const balance = useSelector((state: { wallet: { balance: Balance } }) => state.wallet.balance);
   const transaction = useSelector((state: { transaction: { transaction: Transaction } }) => state.transaction.transaction);
@@ -29,6 +32,17 @@ const TransferDetailFormScreen: React.FC = () => {
   const [accNo, setAccNo] = useState<string>('');
   const [remark, setRemark] = useState<string>('');
   const [bank, setBank] = useState<BankType | null>(null);
+  const [error, setError] = useState<{
+    accNo: string | null;
+    amount: string | null;
+    remark: string | null;
+    bank: string | null;
+  }>({
+    accNo: null,
+    amount: null,
+    remark: null,
+    bank: null,
+  });
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -51,25 +65,92 @@ const TransferDetailFormScreen: React.FC = () => {
     }
   }, [transaction])
 
-  const handleAmountChange = (text: string) => {
+  const handleAmountChange = (text: string): void => {
     const numericText = text.replace(/\D/g, '').replace(/^0+/, '');
+
+    let formattedText = numericText;
     if (numericText.length <= 2) {
-      setAmount(`0.${numericText.padStart(2, '0')}`);
+      formattedText = `0.${numericText.padStart(2, '0')}`;
     } else {
       const integerPart = numericText.slice(0, numericText.length - 2);
       const decimalPart = numericText.slice(numericText.length - 2);
-      setAmount(`${integerPart}.${decimalPart}`);
+      formattedText = `${integerPart}.${decimalPart}`;
+    }
+    setAmount(formattedText);
+
+    if (parseFloat(formattedText) > balance.amount) {
+      setError({ ...error, amount: '** Exceeds available balance' });
+    } else if (error.amount) {
+      setError({ ...error, amount: null });
     }
   };
 
-  const selectBank = (bank: BankType) => {
+  const selectBank = (bank: BankType): void => {
     setBank(bank);
+    if (error.bank) {
+      setError({ ...error, bank: null });
+    }
     bottomSheetModalRef.current?.dismiss();
   };
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
+
+  const validate = (): boolean => {
+    console.log("validate");
+    let hasError: boolean = false;
+    let validateError = { ...error };
+
+    if (!accNo.trim()) {
+      hasError = true;
+      validateError.accNo = '** Required';
+    }
+
+    if (!remark.trim()) {
+      hasError = true;
+      validateError.remark = '** Required';
+    }
+
+    if (!bank && transaction.accType === 1) {
+      hasError = true;
+      validateError.bank = '** Required';
+    }
+
+    if (!amount || parseFloat(amount) <= 0) {
+      hasError = true;
+      validateError.amount = '** Required';
+    }
+
+    if (parseFloat(amount) > balance.amount) {
+      hasError = true;
+      validateError.amount = '** Exceeds available balance';
+    }
+
+    setError(validateError);
+
+    return hasError ? false : true;
+  }
+
+  const handleClose = (): void => {
+    dispatch(resetTransactionInfo());
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      })
+    )
+  }
+
+  const confirmSubmit = (): void => {
+    dispatch(setTransactionAccInfo({
+      accNo: accNo,
+      bankCode: bank?.code,
+      amount: parseFloat(amount),
+      reference: remark,
+    }));
+    navigation.navigate('TransferConfirmation');
+  }
 
   return (
     <GestureHandlerRootView>
@@ -85,16 +166,7 @@ const TransferDetailFormScreen: React.FC = () => {
                   </TouchableOpacity>
                 </View>
                 <View className={styles.closeIconContainer}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.dispatch(
-                        CommonActions.reset({
-                          index: 0,
-                          routes: [{ name: 'Home' }],
-                        })
-                      )
-                    }
-                  >
+                  <TouchableOpacity onPress={handleClose}>
                     <MaterialCommunityIcons name='close' size={25} />
                   </TouchableOpacity>
                 </View>
@@ -102,31 +174,55 @@ const TransferDetailFormScreen: React.FC = () => {
               <View className={styles.card}>
                 <Text className={styles.cardTitle}>Recipient Details</Text>
                 {transaction.accType === 1 && (
-                  <View className={styles.formField}>
-                    <TouchableOpacity activeOpacity={1} onPress={handlePresentModalPress}>
-                      <View className={styles.row}>
-                        <TextInput
-                          className='text-[16px]'
-                          placeholder='Select Recipient Bank'
-                          value={bank ? bank.name : ''}
-                          editable={false}
-                        />
-                        <MaterialIcons name='keyboard-arrow-right' size={20} />
+                  <>
+                    <View className={styles.formField} style={{ borderColor: error.bank ? 'red' : '#005abb' }}>
+                      <TouchableOpacity activeOpacity={1} onPress={handlePresentModalPress}>
+                        <View className={styles.row}>
+                          <TextInput
+                            className='text-[16px]'
+                            placeholder='Select Recipient Bank'
+                            value={bank ? bank.name : ''}
+                            editable={false}
+                          />
+                          <MaterialIcons name='keyboard-arrow-right' size={20} />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                    {error.bank && (
+                      <View>
+                        <Text className={styles.errorText}>
+                          {error.bank}
+                        </Text>
                       </View>
-                    </TouchableOpacity>
-                  </View>
+                    )}
+                  </>
                 )}
-                <CustomTextInput
-                  placeholder={transaction.accType === 2 ? 'Enter Mobile Number' : 'Enter Account Number'}
-                  value={accNo}
-                  onChangeText={(val) => setAccNo(val)}
-                  keyboardType='numeric'
-                />
+                <View>
+                  <CustomTextInput
+                    placeholder={transaction.accType === 2 ? 'Enter Mobile Number' : 'Enter Account Number'}
+                    value={accNo}
+                    onChangeText={(val) => {
+                      setAccNo(val);
+                      if (error.accNo) {
+                        setError({ ...error, accNo: null });
+                      }
+                    }}
+                    keyboardType='numeric'
+                    borderColor={error.accNo ? 'red' : '#005abb'}
+                  />
+                  {error.accNo && (
+                    <View className='mt-2'>
+                      <Text className={styles.errorText}>
+                        {error.accNo}
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
               <View className={styles.card}>
                 <Text className={styles.cardTitle}>Amount</Text>
                 <View>
-                  <View className={styles.formField}>
+                  <View className={styles.formField} style={{ borderColor: error.amount ? 'red' : '#005abb' }}>
                     <Text className={styles.amountText}>RM {amount}</Text>
                     <View className={styles.transparentInputWrapper}>
                       <TextInput
@@ -143,15 +239,28 @@ const TransferDetailFormScreen: React.FC = () => {
                       can transfer up to {balance.currency} {balance.amount.toFixed(2)}
                     </Text>
                   </View>
+                  {error.amount && (
+                    <View className='mt-2'>
+                      <Text className={styles.errorText}>
+                        {error.amount}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
               <View className={styles.card}>
                 <Text className={styles.cardTitle}>Recipient Reference</Text>
                 <View>
                   <CustomTextInput
+                    borderColor={error.remark ? 'red' : '#005abb'}
                     placeholder='Enter Recipient Reference'
                     value={remark}
-                    onChangeText={(val) => setRemark(val)}
+                    onChangeText={(val) => {
+                      setRemark(val);
+                      if (error.remark) {
+                        setError({ ...error, remark: null });
+                      }
+                    }}
                     maxLength={140}
                   />
                   <View className={styles.charCountContainer}>
@@ -159,6 +268,13 @@ const TransferDetailFormScreen: React.FC = () => {
                       {remark.length}/140
                     </Text>
                   </View>
+                  {error.remark && (
+                    <View>
+                      <Text className={styles.errorText}>
+                        {error.remark}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
               <BottomSheetModal
@@ -198,7 +314,11 @@ const TransferDetailFormScreen: React.FC = () => {
             </ScrollView>
           </View>
           <View className={styles.footer}>
-            <ActionButton action={() => { }} disabled={!!accNo.trim() || parseInt(amount, 10) <= 0 || !remark.trim()}>
+            <ActionButton action={() => {
+              if (validate()) {
+                confirmSubmit();
+              }
+            }} >
               <Text className={styles.buttonText}>Next</Text>
             </ActionButton>
           </View>
@@ -223,6 +343,7 @@ const styles = {
   transparentInputWrapper: `absolute left-2 top-3 w-full`,
   transparentInput: `text-lg text-transparent py-1`,
   helperText: `text-gray-500 ml-2`,
+  errorText: `text-red-500 ml-2`,
   charCountContainer: `flex flex-row justify-end`,
   backdrop: `bg-black/50`,
   bottomSheetContainer: `flex-1 px-5 pb-20`,

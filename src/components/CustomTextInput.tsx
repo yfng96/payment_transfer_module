@@ -7,15 +7,16 @@ interface CustomTextInputProps {
   placeholder?: string;
   icon?: ReactNode;
   onChangeText?: (text: string) => void;
+  borderColor?: string;
   [key: string]: any;
 }
 
-function CustomTextInput({ editable, value, placeholder, icon, onChangeText, ...props }: CustomTextInputProps) {
+function CustomTextInput({ editable, value, placeholder, icon, borderColor, onChangeText, ...props }: CustomTextInputProps) {
   return (
-    <View className={styles.formField}>
+    <View className={styles.formField} style={{ borderColor: borderColor ?? '#005abb' }}>
       <View className='flex-1'>
         <TextInput
-          className='text-[16px] w-full'
+          style={[{ fontSize: 16, width: '100%', borderColor: "#005abb" }]}
           placeholder={placeholder ?? 'Enter value here'}
           value={value}
           editable={editable}
@@ -30,7 +31,7 @@ function CustomTextInput({ editable, value, placeholder, icon, onChangeText, ...
 
 
 const styles = {
-  formField: `flex flex-row h-[60px] justify-between items-center border border-[#005abb] rounded-lg p-2.5 gap-2.5`,
+  formField: `flex flex-row h-[60px] justify-between items-center border rounded-lg p-2.5 gap-2.5`,
 };
 
 export default CustomTextInput
