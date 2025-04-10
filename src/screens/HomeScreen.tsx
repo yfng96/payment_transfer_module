@@ -3,11 +3,11 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { Text, View, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from './store';
-import { getBalance } from './features/wallet/walletAction';
+import { getBalance } from '../features/wallet/walletAction';
 import { Placeholder, PlaceholderLine, Fade } from 'rn-placeholder';
 import ActionButton from '~/components/ActionButton';
 import { Balance, UserProfile } from '~/types';
+import { AppDispatch } from '~/store';
 
 type CategoryType = 'Drink' | 'Market' | 'Transfer';
 

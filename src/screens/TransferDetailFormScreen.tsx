@@ -19,8 +19,8 @@ import ActionButton from '~/components/ActionButton';
 import { BANK_OPTIONS } from '~/constant';
 import { Balance, BankType, Transaction } from '~/types';
 import CustomTextInput from '~/components/CustomTextInput';
-import { resetTransactionInfo, setTransactionAccInfo } from './features/transaction/transactionSlice';
-import { AppDispatch } from './store';
+import { resetTransactionInfo, setTransactionAccInfo } from '../features/transaction/transactionSlice';
+import { AppDispatch } from '~/store';
 
 const TransferDetailFormScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

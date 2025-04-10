@@ -18,8 +18,8 @@ import ActionButton from '~/components/ActionButton';
 import RecipientList from '~/components/RecipientList';
 import { RECIPIENT_OPTIONS } from '~/constant';
 import { RecipientInfo, RecipientListType } from '~/types';
-import { AppDispatch } from './store';
-import { resetTransactionInfo, setTransactionAccInfo } from './features/transaction/transactionSlice';
+import { resetTransactionInfo, setTransactionAccInfo } from '../features/transaction/transactionSlice';
+import { AppDispatch } from '~/store';
 
 const RecipientSelectionScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

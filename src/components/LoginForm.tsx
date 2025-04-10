@@ -4,13 +4,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
-import { AppDispatch } from '~/screens/store';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { login } from '~/screens/features/auth/authAction';
+import { login } from '~/features/auth/authAction';
 import ActionButton from './ActionButton';
 import { AuthState } from '~/types';
-import { getBalance } from '~/screens/features/wallet/walletAction';
+import { getBalance } from '~/features/wallet/walletAction';
 import CustomTextInput from './CustomTextInput';
+import { AppDispatch } from '~/store';
 
 function LoginForm() {
   const dispatch = useDispatch<AppDispatch>();

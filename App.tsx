@@ -9,12 +9,12 @@ import Toast from 'react-native-toast-message';
 import SplashScreen from '~/screens/SplashScreen';
 import HomeScreen from '~/screens/HomeScreen';
 import WelcomeScreen from '~/screens/WelcomScreen';
-import { store } from '~/screens/store';
 import { makeServer } from '~/api/server';
 
 import './global.css';
 import RecipientSelectionScreen from '~/screens/RecipientSelectionScreen';
 import TransferDetailFormScreen from '~/screens/TransferDetailFormScreen';
+import { store } from '~/store';
 
 const Stack = createNativeStackNavigator();
 
