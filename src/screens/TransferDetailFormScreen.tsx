@@ -21,6 +21,7 @@ import { Balance, BankType, Transaction } from '~/types';
 import CustomTextInput from '~/components/CustomTextInput';
 import { resetTransactionInfo, setTransactionAccInfo } from '../features/transaction/transactionSlice';
 import { AppDispatch } from '~/store';
+import PriceInput from '~/components/PriceInput';
 
 const TransferDetailFormScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,6 +54,10 @@ const TransferDetailFormScreen: React.FC = () => {
       }, 500);
 
       return () => clearTimeout(timeoutId);
+    }
+
+    return () => {
+      bottomSheetModalRef.current?.dismiss();
     }
   }, [])
 
@@ -222,18 +227,7 @@ const TransferDetailFormScreen: React.FC = () => {
               <View className={styles.card}>
                 <Text className={styles.cardTitle}>Amount</Text>
                 <View>
-                  <View className={styles.formField} style={{ borderColor: error.amount ? 'red' : '#005abb' }}>
-                    <Text className={styles.amountText}>RM {amount}</Text>
-                    <View className={styles.transparentInputWrapper}>
-                      <TextInput
-                        className={styles.transparentInput}
-                        placeholder='Enter amount'
-                        keyboardType='numeric'
-                        onChangeText={handleAmountChange}
-                        value={`RM ${amount}`}
-                      />
-                    </View>
-                  </View>
+                  <PriceInput value={amount} onChangeText={handleAmountChange} error={error.amount} />
                   <View>
                     <Text className={styles.helperText}>
                       can transfer up to {balance.currency} {balance.amount.toFixed(2)}
@@ -327,7 +321,6 @@ const TransferDetailFormScreen: React.FC = () => {
     </GestureHandlerRootView >
   );
 };
-
 const styles = {
   container: `flex flex-col h-full`,
   header: `flex-row justify-center p-5 relative`,
@@ -339,9 +332,6 @@ const styles = {
   cardTitle: `text-lg font-bold`,
   formField: `flex flex-row h-[60px] justify-between items-center border border-[#005abb] rounded-lg p-2.5 gap-2.5`,
   row: `flex flex-row w-full items-center justify-between`,
-  amountText: `text-lg text-black ml-1`,
-  transparentInputWrapper: `absolute left-2 top-3 w-full`,
-  transparentInput: `text-lg text-transparent py-1`,
   helperText: `text-gray-500 ml-2`,
   errorText: `text-red-500 ml-2`,
   charCountContainer: `flex flex-row justify-end`,
@@ -351,9 +341,9 @@ const styles = {
   modalHeader: `flex-row justify-center w-full`,
   modalHeaderText: `text-xl font-bold`,
   modalCloseIconContainer: `absolute right-0`,
-  modalCloseIcon: `absolute right-0 top-0`,
   modalContent: `mt-6 flex items-start`,
   modalOptionText: `text-base`,
+  modalCloseIcon: `absolute right-0 top-0`,
   footer: `py-5 px-4 bg-white`,
   buttonText: `text-white text-lg`,
 };

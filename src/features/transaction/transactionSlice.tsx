@@ -18,12 +18,13 @@ export const transactionSlice = createSlice({
   initialState,
   reducers: {
     setTransactionAccInfo: (state, action) => {
-      const { accType, accNo, bankCode, recipientName, amount } = action.payload;
+      const { accType, accNo, bankCode, recipientName, amount, reference } = action.payload;
       state.transaction.accType = accType || state.transaction.accType;
       state.transaction.accNo = accNo || state.transaction.accNo;
       state.transaction.bankCode = bankCode || state.transaction.bankCode;
       state.transaction.recipientName = recipientName || state.transaction.recipientName;
       state.transaction.amount = amount || state.transaction.amount;
+      state.transaction.reference = reference || state.transaction.reference;
     },
     resetTransactionInfo: (state) => {
       state.transaction = initialState.transaction;
