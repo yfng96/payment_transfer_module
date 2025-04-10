@@ -1,50 +1,52 @@
+import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import { Provider } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Toast from 'react-native-toast-message';
 
 import SplashScreen from '~/screens/SplashScreen';
 import HomeScreen from '~/screens/HomeScreen';
-import TransferScreen from '~/screens/TransferScreen';
-import { Roboto_400Regular, Roboto_500Medium, Roboto_700Bold, useFonts } from '@expo-google-fonts/roboto';
-import { Text, View, StyleSheet } from 'react-native';
-import { Provider } from 'react-redux';
-import { store } from '~/screens/store';
 import WelcomeScreen from '~/screens/WelcomScreen';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
-import { makeServer } from "./server";
-import { useEffect } from 'react';
+import { store } from '~/screens/store';
+import { makeServer } from '~/api/server';
 
 import './global.css';
+import RecipientSelectionScreen from '~/screens/RecipientSelectionScreen';
+import TransferDetailFormScreen from '~/screens/TransferDetailFormScreen';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
-  });
-
   useEffect(() => {
     makeServer(); // Start the Mirage server
   }, []);
-
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
 
   return (
     <Provider store={store}>
       <SafeAreaView style={{ flex: 1 }}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Start" component={SplashScreen} />
-            <Stack.Screen name="Welcome" component={WelcomeScreen} />
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Transfer" component={TransferScreen} />
+            <Stack.Screen name='Start' component={SplashScreen} />
+            <Stack.Screen name='Welcome' component={WelcomeScreen} />
+            <Stack.Screen name='Home' component={HomeScreen} />
+            <Stack.Screen name='RecipientSelection' component={RecipientSelectionScreen}
+              options={{
+                headerShown: false,
+                presentation: 'modal',
+                animationTypeForReplace: 'push',
+                animation: 'slide_from_bottom'
+              }}
+            />
+            <Stack.Screen name='TransferDetailForm' component={TransferDetailFormScreen}
+              options={{
+                headerShown: false,
+                presentation: 'modal',
+                animationTypeForReplace: 'push',
+                animation: 'slide_from_right'
+              }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
         <Toast />

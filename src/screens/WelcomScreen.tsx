@@ -1,26 +1,24 @@
-import CustomText from '~/components/CustomText';
-import CustomTextBold from '~/components/CustomTextBold';
 import { useState } from 'react';
-import { View, } from 'react-native';
+import { Text, View, } from 'react-native';
 import LoginForm from '~/components/LoginForm';
 import ActionButton from '~/components/ActionButton';
 
-const WelcomeScreen = () => {
-  const [showLoginForm, setShowLoginForm] = useState(false);
+const WelcomeScreen: React.FC = () => {
+  const [showLoginForm, setShowLoginForm] = useState<boolean>(false);
 
   return (
     <View className={styles.screen}>
       <View className={showLoginForm ? styles.loginWelcomeContainer : styles.welcomeContainer}>
         {showLoginForm ? (
-          <CustomTextBold className={styles.welcomeText}>
+          <Text className={styles.welcomeText} style={{ fontWeight: 'bold' }} >
             Digital Bank
-          </CustomTextBold>
+          </Text>
         ) : (
           <>
-            <CustomText className={styles.welcomeText}>Welcome to</CustomText>
-            <CustomText className={styles.welcomeText}>
-              the <CustomTextBold>Digital Bank!</CustomTextBold>
-            </CustomText>
+            <Text className={styles.welcomeText}>Welcome to</Text>
+            <Text className={styles.welcomeText}>
+              the <Text className='font-bold'>Digital Bank!</Text>
+            </Text>
           </>
         )}
       </View>
@@ -31,7 +29,7 @@ const WelcomeScreen = () => {
           <ActionButton
             action={() => setShowLoginForm(true)}
           >
-            <CustomText className={styles.loginButtonText}>Login</CustomText>
+            <Text className={styles.loginButtonText}>Login</Text>
           </ActionButton>
         </View >
       )}
@@ -46,8 +44,8 @@ const styles = {
   welcomeContainer: 'flex-1 justify-center',
   welcomeText: 'text-[#005abb] text-[35px]',
   loginButtonText: 'text-white text-[18px]',
-  formField: "flex flex-row h-[60px] justify-between items-center border border-[#005abb] rounded-lg p-2.5 mb-5 gap-2.5",
-  signUpText: "text-center text-[#005abb]"
+  formField: 'flex flex-row h-[60px] justify-between items-center border border-[#005abb] rounded-lg p-2.5 mb-5 gap-2.5',
+  signUpText: 'text-center text-[#005abb]'
 }
 
 export default WelcomeScreen;

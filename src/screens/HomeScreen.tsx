@@ -1,8 +1,13 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { useState } from 'react';
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect, useState } from 'react';
+import { Text, View, ScrollView } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from './store';
+import { getBalance } from './features/wallet/walletAction';
+import { Placeholder, PlaceholderLine, Fade } from 'rn-placeholder';
+import ActionButton from '~/components/ActionButton';
+import { Balance, UserProfile } from '~/types';
 
 type CategoryType = 'Drink' | 'Market' | 'Transfer';
 
@@ -16,9 +21,11 @@ type Transaction = {
 type Categories = Record<CategoryType, { icon: string; color: string }>;
 
 const HomeScreen: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [viewBalance, setViewBalance] = useState<boolean>(false);
-  const balance: number = 50000000;
   const navigation = useNavigation<NavigationProp<any>>();
+  const balance = useSelector((state: { wallet: { balance: Balance } }) => state.wallet.balance);
+  const profile = useSelector((state: { auth: { profile: UserProfile } }) => state.auth.profile);
 
   const history: Transaction[] = [
     {
@@ -56,31 +63,120 @@ const HomeScreen: React.FC = () => {
     },
   };
 
+  useEffect(() => {
+    dispatch(getBalance());
+  }, []);
+
   return (
     <View className={styles.screen}>
+      <View
+        style={{
+          paddingTop: 20,
+          paddingBottom: 10,
+          paddingHorizontal: 20,
+          gap: 10,
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        {profile.name && (
+          <View
+            style={{
+              borderRadius: 50,
+              backgroundColor: '#2773ff',
+              width: 40,
+              height: 40,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 20, color: 'white', fontWeight: 'bold' }}>
+              {profile.name[0]}
+            </Text>
+          </View>
+        )}
+        <View>
+          <Text style={{ fontSize: 16 }}>Hello,</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{profile.name}</Text>
+        </View>
+      </View>
       <ScrollView className={styles.container}>
         <View className={styles.balanceContainer}>
-          <Text className={styles.title}>Balance</Text>
-          <View className={styles.amountContainer}>
-            <Text className={styles.balanceText}>
-              RM {viewBalance ? balance : '*'.repeat(balance.toString().length)}
-            </Text>
-            <MaterialCommunityIcons
-              name={viewBalance ? 'eye' : 'eye-off'}
-              size={24}
-              color="white"
-              onPress={() => setViewBalance(!viewBalance)}
-            />
-          </View>
+          {balance.loading ? (
+            <Placeholder Animation={Fade}>
+              <PlaceholderLine />
+              <PlaceholderLine />
+              <PlaceholderLine width={50} />
+            </Placeholder>
+          ) : (
+            <>
+              <Text className={styles.title}>Total Balance</Text>
+              <View className={styles.amountContainer}>
+                <Text className={styles.balanceText}>
+                  {balance.currency} {viewBalance ? balance.amount.toFixed(2) : '*'.repeat(5)}
+                </Text>
+                <MaterialCommunityIcons
+                  name={viewBalance ? 'eye' : 'eye-off'}
+                  size={24}
+                  color='white'
+                  onPress={() => setViewBalance(!viewBalance)}
+                />
+              </View>
+            </>
+          )}
         </View>
-        <View className={styles.actionRow}>
-          <View className={styles.button}>
-            <MaterialIcons name="add-circle-outline" size={24} color="#2773ff" />
-            <Text className={styles.buttonText}>Add Money</Text>
+        <View className='mt-2'>
+          <View className={styles.actionRow}>
+            <View className='flex-1'>
+              <ActionButton
+                color='#e3ebff'
+                icon={<MaterialCommunityIcons name='line-scan' size={24} color='#2773ff' />}
+              >
+                <Text className={styles.buttonText}>Scan</Text>
+              </ActionButton>
+            </View>
+            <View className='flex-1'>
+              <ActionButton
+                color='#e3ebff'
+                icon={<MaterialIcons name='add-circle-outline' size={24} color='#2773ff' />}
+              >
+                <Text className={styles.buttonText}>Add</Text>
+              </ActionButton>
+            </View>
           </View>
-          <View className={styles.button} onTouchEnd={() => navigation.navigate('Transfer')}>
-            <MaterialIcons name="send" size={24} color="#2773ff" />
-            <Text className={styles.buttonText}>Send Money</Text>
+          <View className={styles.actionRow}>
+            <View className='flex-1'>
+              <ActionButton
+                color='#e3ebff'
+                icon={
+                  <MaterialCommunityIcons
+                    name='arrow-bottom-left-thin'
+                    size={24}
+                    color='#2773ff'
+                  />
+                }
+              >
+                <Text className={styles.buttonText}>Receive</Text>
+              </ActionButton>
+            </View>
+            <View className='flex-1'>
+              <ActionButton
+                color='#e3ebff'
+                icon={
+                  <MaterialCommunityIcons
+                    name='arrow-top-right-thin'
+                    size={24}
+                    color='#2773ff'
+                  />
+                }
+                action={() => navigation.navigate('RecipientSelection')}
+              >
+                <Text className={styles.buttonText}>Send</Text>
+              </ActionButton>
+            </View>
           </View>
         </View>
         <View className={styles.transactionHistoryContainer}>
@@ -95,14 +191,15 @@ const HomeScreen: React.FC = () => {
                   <View className={styles.transactionDetails}>
                     <View
                       className={styles.transactionIconContainer}
-                      style={{ backgroundColor: categories[item.category]?.color }}>
+                      style={{ backgroundColor: categories[item.category]?.color }}
+                    >
                       <MaterialCommunityIcons
                         name={
                           (categories[item.category]
                             ?.icon as keyof typeof MaterialCommunityIcons.glyphMap) || 'circle'
                         }
                         size={20}
-                        color="black"
+                        color='black'
                       />
                     </View>
                     <View>
@@ -112,7 +209,8 @@ const HomeScreen: React.FC = () => {
                   </View>
                   <Text
                     className={styles.transactionAmount}
-                    style={{ color: item.type === 'in' ? '#4caf50' : '#f44336' }}>
+                    style={{ color: item.type === 'in' ? '#4caf50' : '#f44336' }}
+                  >
                     RM {item.amount}
                   </Text>
                 </View>
@@ -129,12 +227,12 @@ const HomeScreen: React.FC = () => {
 const styles = {
   screen: 'flex-1 bg-white',
   container: 'p-5 bg-white',
-  balanceContainer: 'bg-[#3b82f6] rounded-lg p-6 w-full',
+  balanceContainer: 'bg-[#3b82f6] rounded-lg px-6 py-8 w-full',
   title: 'text-white text-2xl',
-  amountContainer: 'flex-row mt-2 items-center',
-  balanceText: 'mr-2 text-4xl font-bold text-white',
-  actionRow: 'flex-row gap-2 mt-5',
-  button: 'bg-[#e3ebff] rounded-xl p-2 items-center flex-1 text-xl flex-row justify-center gap-2',
+  amountContainer: 'flex-row mt-5 items-center',
+  balanceText: 'mr-2 text-4xl text-white font-bold',
+  actionRow: 'flex-wrap flex flex-row gap-2 mt-4',
+  button: 'bg-[#e3ebff] rounded-xl px-2 py-4 items-center flex-1 text-xl flex-row justify-center gap-2',
   buttonText: 'text-xl flex-1 text-center',
   transactionHistoryContainer: 'mt-7',
   transactionHeader: 'flex-row justify-between w-full items-end',

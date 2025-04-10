@@ -1,29 +1,42 @@
 import { ReactNode } from 'react'
-import { View, ViewStyle } from 'react-native'
+import { TouchableOpacity, View, ViewStyle } from 'react-native'
 
-function ActionButton({ children, style, color, action, disabled }: {
+interface ActionButtonProps {
   children: ReactNode;
   style?: ViewStyle;
   color?: string;
   action?: () => void;
   disabled?: boolean;
-}) {
+  icon?: ReactNode;
+  alignment?: 'start' | 'end' | 'center';
+}
+
+export default function ActionButton({
+  children,
+  style,
+  color = '#005abb',
+  action,
+  disabled = false,
+  icon,
+  alignment
+}: ActionButtonProps) {
   return (
-    <View
-      className={styles.loginButton}
-      style={{
-        backgroundColor: color || '#005abb',
-        ...style,
-      }}
-      onTouchEnd={disabled ? () => { } : action}
+    <TouchableOpacity
+      activeOpacity={0.6}
+      className={`w-full py-3 px-4 rounded-lg justify-center ${alignment ? `items-${alignment}` : 'items-center'} relative`}
+      style={[
+        color ? { backgroundColor: color } : { backgroundColor: '#005abb' },
+        style,
+      ]}
+      onPress={action}
+      disabled={disabled}
     >
+      {icon && <View className='absolute left-2'>{icon}</View>}
       {children}
-    </View>
-  )
+    </TouchableOpacity>
+  );
 }
 
 const styles = {
-  loginButton: 'rounded-lg p-3 flex flex-row  justify-center items-center',
+  button: 'rounded-lg p-3 flex flex-row justify-center items-center',
 }
-
-export default ActionButton

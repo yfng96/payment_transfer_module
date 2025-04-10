@@ -1,0 +1,60 @@
+import { TransactionHistory } from '~/types';
+
+export const mockTransactions: TransactionHistory[] = [
+  {
+    id: 'tx007',
+    category: 'Dining',
+    amount: 45.6,
+    remark: 'Nando’s Dinner',
+    createdAt: '2025-04-01 10:25:00',
+    type: 'debit',
+  },
+  {
+    id: 'tx006',
+    category: 'Mobile Top-up',
+    amount: 30.0,
+    remark: 'Digi Prepaid',
+    createdAt: '2025-04-03 15:25:00',
+    type: 'debit',
+  },
+  {
+    id: 'tx005',
+    category: 'Utilities',
+    amount: 85.3,
+    remark: 'Electricity Bill',
+    createdAt: '2025-04-04 07:25:00',
+    type: 'debit',
+  },
+  {
+    id: 'tx004',
+    category: 'Online Shopping',
+    amount: 120.0,
+    remark: 'Shopee Purchase',
+    createdAt: '2025-04-06 08:25:00',
+    type: 'debit',
+  },
+  {
+    id: 'tx003',
+    category: 'Transport',
+    amount: 5.5,
+    remark: 'Grab Ride',
+    createdAt: '2025-04-06 08:30:00',
+    type: 'debit',
+  },
+  {
+    id: 'tx002',
+    category: 'Salary',
+    amount: 2500.0,
+    remark: 'April Salary',
+    createdAt: '2025-04-06 10:30:00',
+    type: 'credit',
+  },
+  {
+    id: 'tx001',
+    category: 'Food & Beverage',
+    amount: 12.9,
+    remark: 'Starbucks Coffee',
+    createdAt: '2025-04-08 10:30:00',
+    type: 'debit',
+  },
+];
