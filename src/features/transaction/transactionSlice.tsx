@@ -30,12 +30,6 @@ export const transactionSlice = createSlice({
       state.transaction = initialState.transaction;
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(createTransfer.fulfilled, (state) => {
-        state.transaction = initialState.transaction;
-      });
-  },
 });
 
 export const { setTransactionAccInfo, resetTransactionInfo } = transactionSlice.actions;
