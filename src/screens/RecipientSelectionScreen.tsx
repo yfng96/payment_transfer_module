@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import {
   BottomSheetModal,
@@ -20,6 +20,7 @@ import { RECIPIENT_OPTIONS } from '~/constant';
 import { RecipientInfo, RecipientListType } from '~/types';
 import { resetTransactionInfo, setTransactionAccInfo } from '../features/transaction/transactionSlice';
 import { AppDispatch } from '~/store';
+import { getFavouriteRecipient, getRecentRecipient } from '~/features/wallet/walletAction';
 
 const RecipientSelectionScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,6 +37,11 @@ const RecipientSelectionScreen: React.FC = () => {
 
   const sliderPosition = new Animated.Value(0);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    dispatch(getFavouriteRecipient());
+    dispatch(getRecentRecipient());
+  }, []);
 
   const handleTabChange = (index: number): void => {
     setSelectedTab(index);

@@ -7,14 +7,12 @@ export interface Balance {
 export interface RecipientListType {
   list: RecipientInfo[];
   loading: boolean;
-  error: string | null;
   total?: number;
 }
 
 export interface TransactionListType {
   list: any[];
   loading: boolean;
-  error: string | null;
   total?: number;
 }
 
@@ -52,4 +50,9 @@ export interface RecipientInfo {
   bankCode?: string;
   bankName?: string;
   accountNo: string;
+}
+
+export interface RecipientListResponse {
+  data: RecipientInfo[];
+  total?: number;
 }

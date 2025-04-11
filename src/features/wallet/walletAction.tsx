@@ -43,3 +43,28 @@ export const getRecentTransaction = createAsyncThunk(
     }
   }
 );
+
+export const getFavouriteRecipient = createAsyncThunk(
+  `${WALLET}/getFavouriteRecipient`,
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/api/recipient/favourite');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getRecentRecipient = createAsyncThunk(
+  `${WALLET}/getRecentRecipient`,
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/api/recipient/recent');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error);
+    }
+  }
+);
+

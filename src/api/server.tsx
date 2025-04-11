@@ -1,6 +1,6 @@
 import { Server, Response } from 'miragejs';
-import { mockTransactions } from './data/wallet';
-import { LoginResponse, TransactionHistory } from '~/types';
+import { mockRecipients, mockTransactions } from './data/wallet';
+import { LoginResponse, RecipientInfo, TransactionHistory } from '~/types';
 
 
 export function makeServer({ token }: { token?: string } = {}) {
@@ -53,6 +53,24 @@ export function makeServer({ token }: { token?: string } = {}) {
         }
 
         let list: TransactionHistory[] = mockTransactions.slice(0, 4);
+        return new Response(200, {}, { data: list });
+      });
+
+      this.get('/recipient/favourite', (schema, request): Response => {
+        if (!token) {
+          return new Response(401, {}, { error: 'Unauthorized' });
+        }
+
+        let list: RecipientInfo[] = [...mockRecipients];
+        return new Response(200, {}, { data: list });
+      });
+
+      this.get('/recipient/recent', (schema, request): Response => {
+        if (!token) {
+          return new Response(401, {}, { error: 'Unauthorized' });
+        }
+
+        let list: RecipientInfo[] = mockRecipients.slice(0, 2);
         return new Response(200, {}, { data: list });
       });
 

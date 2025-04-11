@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getBalance, getRecentTransaction, getTransactionHistory, WALLET } from './walletAction';
-import { TransactionHistoryResponse, WalletState } from '~/types';
+import { getBalance, getFavouriteRecipient, getRecentRecipient, getRecentTransaction, getTransactionHistory, WALLET } from './walletAction';
+import { RecipientListResponse, TransactionHistoryResponse, WalletState } from '~/types';
 
 const initialState: WalletState = {
   initialLoaded: false,
@@ -12,51 +12,21 @@ const initialState: WalletState = {
   transactionHistory: {
     list: [],
     loading: false,
-    error: null,
     total: 0,
   },
   recentTransaction: {
     list: [],
     loading: false,
-    error: null,
   },
   favouriteRecipient: {
-    list: [{
-      name: 'YF Hong Leong',
-      type: 1,
-      bankName: 'Hong Leong Bank',
-      bankCode: 'HLB',
-      accountNo: '2222222222'
-    },
-    {
-      name: 'YF Cimb',
-      type: 1,
-      bankName: 'Alliance Bank',
-      bankCode: 'ALLIANCE',
-      accountNo: '2222222222'
-    },
-    {
-      name: 'YF Mobile',
-      type: 2,
-      bankName: 'TNG Wallet',
-      bankCode: 'TNG',
-      accountNo: '60102222222'
-    }],
+    list: [],
     loading: false,
-    error: null,
-    total: 3,
+    total: 0,
   },
   recentRecipient: {
-    list: [{
-      name: 'YF Mobile',
-      type: 2,
-      bankName: 'TNG Wallet',
-      bankCode: 'TNG',
-      accountNo: '60102222222'
-    }],
+    list: [],
     loading: false,
-    error: null,
-    total: 1,
+    total: 0,
   }
 };
 
@@ -103,9 +73,7 @@ export const walletSlice = createSlice({
         state.transactionHistory.loading = false;
       })
       .addCase(getTransactionHistory.rejected, (state, action) => {
-        const { message } = action.payload as { message: string };
         state.transactionHistory.loading = false;
-        state.transactionHistory.error = message;
       });
     builder
       .addCase(getRecentTransaction.pending, (state) => {
@@ -117,9 +85,33 @@ export const walletSlice = createSlice({
         state.recentTransaction.loading = false;
       })
       .addCase(getRecentTransaction.rejected, (state, action) => {
-        const { message } = action.payload as { message: string };
         state.recentTransaction.loading = false;
-        state.recentTransaction.error = message;
+      });
+    builder
+      .addCase(getFavouriteRecipient.pending, (state) => {
+        state.favouriteRecipient.loading = true;
+      })
+      .addCase(getFavouriteRecipient.fulfilled, (state, action) => {
+        const { data } = action.payload as RecipientListResponse;
+        state.favouriteRecipient.list = data;
+        state.favouriteRecipient.total = data.length;
+        state.favouriteRecipient.loading = false;
+      })
+      .addCase(getFavouriteRecipient.rejected, (state, action) => {
+        state.favouriteRecipient.loading = false;
+      });
+    builder
+      .addCase(getRecentRecipient.pending, (state) => {
+        state.recentRecipient.loading = true;
+      })
+      .addCase(getRecentRecipient.fulfilled, (state, action) => {
+        const { data } = action.payload as RecipientListResponse;
+        state.recentRecipient.list = data;
+        state.recentRecipient.total = data.length;
+        state.recentRecipient.loading = false;
+      })
+      .addCase(getRecentRecipient.rejected, (state, action) => {
+        state.recentRecipient.loading = false;
       });
   },
 

@@ -1,4 +1,4 @@
-import { TransactionHistory } from '~/types';
+import { RecipientInfo, TransactionHistory } from '~/types';
 
 export const mockTransactions: TransactionHistory[] = [
   {
@@ -120,5 +120,29 @@ export const mockTransactions: TransactionHistory[] = [
     type: 'debit',
     amount: 65.0,
     currency: 'MYR',
+  },
+];
+
+export const mockRecipients: RecipientInfo[] = [
+  {
+    name: 'YF Hong Leong',
+    type: 1,
+    bankName: 'Hong Leong Bank',
+    bankCode: 'HLB',
+    accountNo: '2222222222',
+  },
+  {
+    name: 'YF Cimb',
+    type: 1,
+    bankName: 'Alliance Bank',
+    bankCode: 'ALLIANCE',
+    accountNo: '2222222222',
+  },
+  {
+    name: 'YF Mobile',
+    type: 2,
+    bankName: 'TNG Wallet',
+    bankCode: 'TNG',
+    accountNo: '60102222222',
   },
 ];
