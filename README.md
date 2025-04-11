@@ -43,3 +43,22 @@ npm run android
 - **Redux** for state management
 - **MirageJS** for mocking backend APIs (balance & transactions)
 - **Tailwind CSS** for styling
+## 🧠 Design Decisions
+
+**Biometric & PIN Fallback**  
+Implemented biometric authentication (Face ID / Fingerprint) using `expo-local-authentication`. To ensure accessibility across all devices, a fallback modal was provided for entering a 6-digit PIN. This allows users without biometric support to still securely access the application.
+
+**Axios Interceptors**  
+Global error handling was implemented through Axios interceptors. This ensures consistent user feedback for various scenarios including network connection errors and unauthorized requests. By centralizing error responses, we reduce code duplication and improve maintainability.
+
+**Redux Toolkit**  
+Redux Toolkit is used for managing the app's global state, including authentication, wallet balance, and transaction history. `createAsyncThunk` is utilized for structured and reliable API calls, offering clear loading, success, and failure states.
+
+**MirageJS Mock Server**  
+A MirageJS server is integrated to simulate API responses during development. This enables thorough UI testing, including offline and error states, without the need for a live backend. It's especially useful for mocking authentication flows, balance fetching, and transaction records.
+
+## 🧰 Challenges Faced
+
+**UI Design & Time Management**  
+Designing the UI took more time than expected due to uncertainty in layout and flow. Extra effort went into refining the user experience, which initially slowed development
+
