@@ -1,5 +1,5 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
-import { Modal, View, TextInput, Text, TouchableOpacity, Alert, Keyboard } from 'react-native';
+import { ReactNode } from 'react';
+import { Modal, View, Text, TouchableOpacity } from 'react-native';
 import ActionButton from './ActionButton';
 
 const GeneralModal = ({
@@ -21,29 +21,9 @@ const GeneralModal = ({
   proceedLabel?: string;
   cancelLabel?: string;
 }) => {
-  const [pin, setPin] = useState('');
-  const pinInputRef = useRef<TextInput>(null)
-
-  const handlePinChange = (input: string): void => {
-    if (input.length <= 6) {
-      setPin(input);
-    }
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        pinInputRef.current?.focus();
-      }, 100);
-    } else {
-      setPin('');
-      Keyboard.dismiss();
-    }
-  }, [isOpen]);
-
   return (
     <Modal
-      animationType="slide"
+      animationType='slide'
       transparent={true}
       visible={isOpen}
       onRequestClose={handleClose}
@@ -65,13 +45,13 @@ const GeneralModal = ({
           >
             <View>
               <ActionButton action={handleProceed}>
-                <Text className={styles.submitButtonText}>{proceedLabel ?? "OK"}</Text>
+                <Text className={styles.submitButtonText}>{proceedLabel ?? 'OK'}</Text>
               </ActionButton>
             </View>
             {showCancelButton && (
               <View>
                 <TouchableOpacity onPress={handleClose}>
-                  <Text className={styles.cancelButtonText}>{cancelLabel ?? "Cancel"}</Text>
+                  <Text className={styles.cancelButtonText}>{cancelLabel ?? 'Cancel'}</Text>
                 </TouchableOpacity>
               </View>
             )}

@@ -42,7 +42,7 @@ const PinModal = ({
 
   return (
     <Modal
-      animationType="slide"
+      animationType='slide'
       transparent={true}
       visible={isOpen}
       onRequestClose={handleClose}
@@ -60,7 +60,7 @@ const PinModal = ({
             className={styles.pinInput}
             value={pin}
             onChangeText={handlePinChange}
-            keyboardType="numeric"
+            keyboardType='numeric'
             maxLength={6}
             secureTextEntry={true}
             autoFocus={true}

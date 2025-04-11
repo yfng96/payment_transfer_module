@@ -16,12 +16,28 @@ function LoginForm() {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<NavigationProp<any>>();
   const [email, setEmail] = useState('');
+  const [emailValid, setEmailValid] = useState(true);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const { loginLoading } = useSelector((state: { auth: AuthState }) => state.auth);
 
   const handleLogin = () => {
+    let isValid = true;
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    isValid = emailRegex.test(email);
+    setEmailValid(isValid);
+
+    if (!isValid) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid email format',
+        position: 'bottom',
+      });
+      return;
+    }
+
     dispatch(login({ email, password }))
       .then(unwrapResult)
       .then(() => {
@@ -45,8 +61,14 @@ function LoginForm() {
         className='text-[16px] w-full'
         placeholder='Email'
         value={email}
-        onChangeText={val => setEmail(val)}
+        onChangeText={val => {
+          setEmail(val);
+          if (!emailValid) {
+            setEmailValid(true);
+          }
+        }}
         editable={!loginLoading}
+        borderColor={!emailValid ? 'red' : '#005abb'}
       />
       <CustomTextInput
         placeholder='Password'

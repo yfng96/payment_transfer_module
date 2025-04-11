@@ -74,12 +74,12 @@ function PriceInput({
         </View>
       </TouchableWithoutFeedback>
       <View className={styles.transparentInputWrapper}>
-        <View pointerEvents="none">
+        <View pointerEvents='none'>
           <TextInput
             ref={inputRef}
             className={styles.transparentInput}
-            placeholder="Enter amount"
-            keyboardType="numeric"
+            placeholder='Enter amount'
+            keyboardType='numeric'
             onChangeText={onChangeText}
             caretHidden={true}
             selectTextOnFocus={false}
@@ -100,7 +100,7 @@ const styles = {
   amountText: `text-lg text-black ml-1`,
   transparentInputWrapper: `absolute left-2 top-3 w-full`,
   transparentInput: `text-lg text-transparent py-1 opacity-0 bg-black`,
-  cursor: "position absolute text-[18px] text-[#005abb] font-bold",
+  cursor: 'position absolute text-[18px] text-[#005abb] font-bold',
 };
 
 export default PriceInput;
