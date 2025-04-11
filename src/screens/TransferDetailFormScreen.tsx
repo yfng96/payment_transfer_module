@@ -165,7 +165,10 @@ const TransferDetailFormScreen: React.FC = () => {
               <View className={styles.header}>
                 <Text className={styles.headerText}>Transfer</Text>
                 <View className={styles.backIconContainer}>
-                  <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <TouchableOpacity onPress={() => {
+                    navigation.goBack();
+                    dispatch(resetTransactionInfo());
+                  }}>
                     <MaterialIcons name='arrow-back-ios' size={25} />
                   </TouchableOpacity>
                 </View>

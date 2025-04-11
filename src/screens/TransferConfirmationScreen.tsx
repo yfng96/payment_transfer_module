@@ -78,7 +78,6 @@ const TransferConfirmationScreen: React.FC = () => {
       .then(() => {
         setIsSubmitting(false);
         dispatch(updateBalance(-transaction.amount));
-        dispatch(resetTransactionInfo());
 
         setShowSuccessModal(true);
       })
@@ -202,6 +201,8 @@ const TransferConfirmationScreen: React.FC = () => {
         showCancelButton={false}
         handleProceed={() => {
           setShowSuccessModal(false);
+          dispatch(resetTransactionInfo());
+
           navigation.dispatch(
             CommonActions.reset({
               index: 0,

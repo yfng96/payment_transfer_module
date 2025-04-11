@@ -2,7 +2,7 @@ import { BankType, RecipientOptionType } from '~/types';
 
 export const RECIPIENT_OPTIONS: RecipientOptionType[] = [
   {
-    name: 'Bank Accuont / E-Wallet Number',
+    name: 'Bank Account / E-Wallet Number',
     type: 1,
   },
   {
