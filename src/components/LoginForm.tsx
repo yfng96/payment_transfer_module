@@ -47,11 +47,14 @@ function LoginForm() {
           routes: [{ name: 'Home' }],
         }));
       }).catch((error) => {
-        Toast.show({
-          type: 'error',
-          text1: error.message,
-          position: 'bottom',
-        });
+        if (error.code === 'FAILED') {
+          Toast.show({
+            type: 'error',
+            text1: error.data.error,
+            position: 'bottom',
+          });
+          return;
+        }
       });
   };
 

@@ -8,15 +8,20 @@ export function makeServer({ token }: { token?: string } = {}) {
     routes() {
       this.namespace = 'api';
 
-      this.post('/login', (schema, request): LoginResponse => {
-        return {
-          token: 'sdfsfdss',
+      this.post('/login', (schema, request): Response => {
+        const { email, password } = JSON.parse(request.requestBody);
+        if (email !== 'admin@hotmail.com' || password !== '123456') {
+          return new Response(400, {}, { error: 'Invalid email or password' });
+        }
+
+        return new Response(200, {}, {
+          token: 'sdfsfdsssdsdffsdfsdf',
           expiredAt: '2025-10-10 10:00:00',
           user: {
             name: 'John Doe',
-            email: 'chia5484@hotmail.com',
+            email: 'admin@hotmail.com',
           },
-        };
+        });
       });
 
       this.get('/wallet-info', (schema, request): Response => {
