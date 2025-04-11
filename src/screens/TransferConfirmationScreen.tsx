@@ -1,29 +1,30 @@
-import { useCallback, useState } from "react";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { useCallback, useState } from 'react';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import {
   CommonActions,
   NavigationProp,
   useNavigation,
-} from "@react-navigation/native";
+} from '@react-navigation/native';
 import {
   Text,
   View,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-} from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import ActionButton from "~/components/ActionButton";
-import { BANK_OPTIONS } from "~/constant";
-import { Balance, Transaction } from "~/types";
-import { resetTransactionInfo } from "../features/transaction/transactionSlice";
-import { AppDispatch } from "~/store";
-import * as LocalAuthentication from "expo-local-authentication";
-import { createTransfer } from "~/features/transaction/transactionAction";
-import { unwrapResult } from "@reduxjs/toolkit";
-import Toast from "react-native-toast-message";
-import PinModal from "~/components/PinModal";
-import GeneralModal from "~/components/GeneralModal";
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import ActionButton from '~/components/ActionButton';
+import { BANK_OPTIONS } from '~/constant';
+import { Transaction } from '~/types';
+import { resetTransactionInfo } from '../features/transaction/transactionSlice';
+import { AppDispatch } from '~/store';
+import * as LocalAuthentication from 'expo-local-authentication';
+import { createTransfer } from '~/features/transaction/transactionAction';
+import { unwrapResult } from '@reduxjs/toolkit';
+import Toast from 'react-native-toast-message';
+import PinModal from '~/components/PinModal';
+import GeneralModal from '~/components/GeneralModal';
+import { updateBalance } from '~/features/wallet/walletSlice';
 
 const TransferConfirmationScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -46,7 +47,7 @@ const TransferConfirmationScreen: React.FC = () => {
     }
 
     const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Authenticate to Complete Payment",
+      promptMessage: 'Authenticate to Complete Payment',
       disableDeviceFallback: false,
     });
 
@@ -76,15 +77,20 @@ const TransferConfirmationScreen: React.FC = () => {
       .then(unwrapResult)
       .then(() => {
         setIsSubmitting(false);
+        dispatch(updateBalance(-transaction.amount));
+        dispatch(resetTransactionInfo());
+
         setShowSuccessModal(true);
       })
-      .catch(() => {
+      .catch((e) => {
         setIsSubmitting(false);
-        Toast.show({
-          type: "error",
-          text1: "Payment transfer failed. Please try again.",
-          position: "bottom",
-        });
+        if (e.code === 'FAILED') {
+          Toast.show({
+            type: 'error',
+            text1: 'Payment transfer failed. Please try again.',
+            position: 'bottom',
+          });
+        }
       });
   };
 
@@ -93,30 +99,30 @@ const TransferConfirmationScreen: React.FC = () => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: "Home" }],
+        routes: [{ name: 'Home' }],
       })
     );
   };
 
   const getBankName = useCallback((code: string): string => {
     const bank = BANK_OPTIONS.find((bank) => bank.code === code);
-    return bank ? bank.name : "";
+    return bank ? bank.name : '';
   }, []);
 
   return (
     <View className={styles.container}>
-      <View className="flex-1">
+      <View className='flex-1'>
         <ScrollView contentContainerClassName={styles.scrollviewContainer}>
           <View className={styles.header}>
             <Text className={styles.headerText}>Confirmation</Text>
             <View className={styles.backIconContainer}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
-                <MaterialIcons name="arrow-back-ios" size={25} />
+                <MaterialIcons name='arrow-back-ios' size={25} />
               </TouchableOpacity>
             </View>
             <View className={styles.closeIconContainer}>
               <TouchableOpacity onPress={handleClose}>
-                <MaterialCommunityIcons name="close" size={25} />
+                <MaterialCommunityIcons name='close' size={25} />
               </TouchableOpacity>
             </View>
           </View>
@@ -133,9 +139,9 @@ const TransferConfirmationScreen: React.FC = () => {
               <Text className={styles.sectionTitle}>To</Text>
               <View className={styles.cardContainer}>
                 {transaction.accType === 1 ? (
-                  <MaterialCommunityIcons name="bank" size={30} />
+                  <MaterialCommunityIcons name='bank' size={30} />
                 ) : (
-                  <MaterialCommunityIcons name="cellphone" size={30} />
+                  <MaterialCommunityIcons name='cellphone' size={30} />
                 )}
                 <View>
                   {!!transaction.recipientName && (
@@ -146,7 +152,7 @@ const TransferConfirmationScreen: React.FC = () => {
                   <Text className={styles.bankOrMobile}>
                     {transaction.accType === 1
                       ? getBankName(transaction.bankCode)
-                      : "Mobile Number"}
+                      : 'Mobile Number'}
                   </Text>
                   <Text className={styles.accountNumber}>
                     {transaction.accNo}
@@ -170,7 +176,7 @@ const TransferConfirmationScreen: React.FC = () => {
         <ActionButton
           action={handlePaymentTransfer}
           icon={
-            isSubmitting && <ActivityIndicator size="small" color="white" />
+            isSubmitting && <ActivityIndicator size='small' color='white' />
           }
           style={{ gap: 8 }}
           disabled={isSubmitting}
@@ -188,9 +194,9 @@ const TransferConfirmationScreen: React.FC = () => {
         handleClose={() => setShowSuccessModal(false)}
         icon={
           <MaterialCommunityIcons
-            name="check-circle"
+            name='check-circle'
             size={100}
-            color="#00ba09"
+            color='#00ba09'
           />
         }
         showCancelButton={false}
@@ -199,12 +205,12 @@ const TransferConfirmationScreen: React.FC = () => {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{ name: "Home" }],
+              routes: [{ name: 'Home' }],
             })
           );
         }}
       >
-        <Text className="text-center text-2xl font-bold">
+        <Text className='text-center text-2xl font-bold'>
           Transfer Successful
         </Text>
       </GeneralModal>
@@ -224,7 +230,7 @@ const styles = {
   amountValue: `text-3xl font-bold`,
   detailsContainer: `mt-5`,
   section: `flex flex-col mt-5`,
-  sectionTitle: `text-lg font-bold mx-5`,
+  sectionTitle: `text-lg font-bold mx-5 pl-3`,
   cardContainer: `flex flex-row items-center bg-white p-4 my-2 rounded-lg shadow-lg shadow-black-400 mx-5 gap-2.5`,
   recipientName: `text-sm`,
   bankOrMobile: `text-sm`,

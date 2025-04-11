@@ -3,11 +3,11 @@ import { getBalance, getRecentTransaction, getTransactionHistory, WALLET } from 
 import { TransactionHistoryResponse, WalletState } from '~/types';
 
 const initialState: WalletState = {
+  initialLoaded: false,
   balance: {
     amount: 0,
     currency: 'MYR',
     loading: true,
-    isLoaded: false,
   },
   transactionHistory: {
     list: [],
@@ -65,6 +65,12 @@ export const walletSlice = createSlice({
   name: WALLET,
   initialState,
   reducers: {
+    finishInitialLoad: (state) => {
+      state.initialLoaded = true;
+    },
+    updateBalance: (state, action) => {
+      state.balance.amount += action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -77,7 +83,10 @@ export const walletSlice = createSlice({
           amount: balance,
           currency,
           loading: false,
-          isLoaded: true,
+        }
+
+        if (!state.initialLoaded) {
+          state.initialLoaded = true;
         }
       })
       .addCase(getBalance.rejected, (state, action) => {
@@ -116,5 +125,5 @@ export const walletSlice = createSlice({
 
 });
 
-export const { } = walletSlice.actions;
+export const { finishInitialLoad, updateBalance } = walletSlice.actions;
 export default walletSlice.reducer;

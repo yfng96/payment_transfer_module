@@ -2,29 +2,27 @@ export interface Balance {
   amount: number;
   currency: string;
   loading: boolean;
-  isLoaded: boolean;
 }
 
 export interface RecipientListType {
   list: RecipientInfo[];
   loading: boolean;
   error: string | null;
-  total: number;
+  total?: number;
+}
+
+export interface TransactionListType {
+  list: any[];
+  loading: boolean;
+  error: string | null;
+  total?: number;
 }
 
 export interface WalletState {
+  initialLoaded: boolean;
   balance: Balance;
-  transactionHistory: {
-    list: any[];
-    loading: boolean;
-    error: string | null;
-    total: number;
-  };
-  recentTransaction: {
-    list: any[];
-    loading: boolean;
-    error: string | null;
-  };
+  transactionHistory: TransactionListType;
+  recentTransaction: TransactionListType;
   favouriteRecipient: RecipientListType;
   recentRecipient: RecipientListType;
 }
@@ -35,10 +33,15 @@ export interface TransactionHistoryResponse {
 }
 
 export interface TransactionHistory {
-  id: string;
-  category: string;
+  refCode: string;
+  accType: number;
+  bankCode?: string | null;
+  description?: string;
+  reference?: string;
+  recipientName?: string | null;
   amount: number;
-  remark: string;
+  action?: string;
+  currency: string;
   createdAt: string;
   type: string;
 }

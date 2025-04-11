@@ -1,66 +1,67 @@
-import { Server, Model, Registry, Response } from "miragejs";
-import { mockTransactions } from "./data/wallet";
-import { LoginResponse, TransactionHistory, TransactionHistoryResponse } from "~/types";
+import { Server, Response } from 'miragejs';
+import { mockTransactions } from './data/wallet';
+import { LoginResponse, TransactionHistory } from '~/types';
 
-interface WalletInfo {
-  balance: number;
-  currency: string;
-}
 
-interface WalletInfoResponse {
-  balance: number;
-  currency: string;
-}
-
-export function makeServer({ environment = "development" }: { environment?: string } = {}) {
+export function makeServer({ token }: { token?: string } = {}) {
   let server = new Server({
-    environment,
-
     routes() {
-      this.namespace = "api";
+      this.namespace = 'api';
 
-      this.post("/login", (schema, request): LoginResponse => {
+      this.post('/login', (schema, request): LoginResponse => {
         return {
-          token: "sdfsfdss",
-          expiredAt: "2025-10-10 10:00:00",
+          token: 'sdfsfdss',
+          expiredAt: '2025-10-10 10:00:00',
           user: {
-            name: "John Doe",
-            email: "chia5484@hotmail.com",
+            name: 'John Doe',
+            email: 'chia5484@hotmail.com',
           },
         };
       });
 
-      this.get("/wallet-info", (schema, request): WalletInfoResponse => {
-        return {
+      this.get('/wallet-info', (schema, request): Response => {
+        if (!token) {
+          return new Response(401, {}, { error: 'Unauthorized' });
+        }
+
+        return new Response(200, {}, {
           balance: 5000,
-          currency: "MYR",
-        };
+          currency: 'MYR',
+        });
       });
 
-      this.get("/transaction-history/list", (schema, request): TransactionHistoryResponse => {
+      this.get('/transaction-history/list', (schema, request): Response => {
+        if (!token) {
+          return new Response(401, {}, { error: 'Unauthorized' });
+        }
+
         const { length, start } = request.queryParams;
-        const startIndex = parseInt(Array.isArray(start) ? start[0] : start || "0", 10);
-        const lengthIndex = parseInt(Array.isArray(length) ? length[0] : length || "0", 10);
+        const startIndex = parseInt(Array.isArray(start) ? start[0] : start || '0', 10);
+        const lengthIndex = parseInt(Array.isArray(length) ? length[0] : length || '0', 10);
 
         let list: TransactionHistory[] = mockTransactions.slice(startIndex, startIndex + lengthIndex);
 
-        return {
+        return new Response(200, {}, {
           data: list,
           total: mockTransactions.length,
-        };
+        });
       });
 
-      this.get("/transaction-history/recent", (schema, request): TransactionHistoryResponse => {
-        let list: TransactionHistory[] = mockTransactions.slice(0, 3);
-        ;
-        return {
-          data: list,
-        };
+      this.get('/transaction-history/recent', (schema, request): Response => {
+        if (!token) {
+          return new Response(401, {}, { error: 'Unauthorized' });
+        }
+
+        let list: TransactionHistory[] = mockTransactions.slice(0, 4);
+        return new Response(200, {}, { data: list });
       });
 
-      this.post("/transfer", (schema, request): Response => {
-        // Simulate a successful transfer
-        return new Response(200, {}, { data: null, message: "Transfer successful" });
+      this.post('/transfer', (schema, request): Response => {
+        if (!token) {
+          return new Response(401, {}, { error: 'Unauthorized' });
+        }
+
+        return new Response(200, {}, { data: null, message: 'Transfer successful' });
       });
     },
   });

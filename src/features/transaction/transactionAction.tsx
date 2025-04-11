@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import api from 'api';
 
 export const TRANSACTION = 'transaction';
 
@@ -22,7 +22,7 @@ export const createTransfer = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post('/api/transfer', {
+      const response = await api.post('/api/transfer', {
         accNo,
         accType,
         bankCode,
@@ -31,7 +31,7 @@ export const createTransfer = createAsyncThunk(
       });
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error);
     }
   }
 );
