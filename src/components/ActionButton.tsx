@@ -26,6 +26,7 @@ export default function ActionButton({
       className={`w-full py-3 px-4 rounded-lg justify-center ${alignment ? `items-${alignment}` : 'items-center'} relative`}
       style={[
         color ? { backgroundColor: color } : { backgroundColor: '#005abb' },
+        disabled ? { opacity: 0.5 } : { opacity: 1 },
         style,
       ]}
       onPress={action}

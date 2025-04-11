@@ -7,6 +7,7 @@ const initialState: WalletState = {
     amount: 0,
     currency: 'MYR',
     loading: true,
+    isLoaded: false,
   },
   transactionHistory: {
     list: [],
@@ -76,6 +77,7 @@ export const walletSlice = createSlice({
           amount: balance,
           currency,
           loading: false,
+          isLoaded: true,
         }
       })
       .addCase(getBalance.rejected, (state, action) => {

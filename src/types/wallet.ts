@@ -2,6 +2,7 @@ export interface Balance {
   amount: number;
   currency: string;
   loading: boolean;
+  isLoaded: boolean;
 }
 
 export interface RecipientListType {

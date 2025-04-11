@@ -103,7 +103,6 @@ const TransferDetailFormScreen: React.FC = () => {
   }, []);
 
   const validate = (): boolean => {
-    console.log("validate");
     let hasError: boolean = false;
     let validateError = { ...error };
 

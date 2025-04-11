@@ -64,8 +64,9 @@ const HomeScreen: React.FC = () => {
   };
 
   useEffect(() => {
-    dispatch(getBalance());
-  }, []);
+    if (!balance.isLoaded)
+      dispatch(getBalance());
+  }, [balance]);
 
   return (
     <View className={styles.screen}>

@@ -31,7 +31,8 @@
     "react-native-toast-message": "^2.2.1",
     "react-native-vector-icons": "^10.2.0",
     "react-redux": "^9.2.0",
-    "rn-placeholder": "^3.0.3"
+    "rn-placeholder": "^3.0.3",
+    "expo-local-authentication": "~15.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

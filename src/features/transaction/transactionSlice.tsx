@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { TransactionState } from '~/types';
-import { TRANSACTION } from './transactionAction';
+import { createTransfer, TRANSACTION } from './transactionAction';
 
 const initialState: TransactionState = {
   transaction: {
@@ -30,7 +30,12 @@ export const transactionSlice = createSlice({
       state.transaction = initialState.transaction;
     },
   },
-  extraReducers: (builder) => { },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createTransfer.fulfilled, (state) => {
+        state.transaction = initialState.transaction;
+      });
+  },
 });
 
 export const { setTransactionAccInfo, resetTransactionInfo } = transactionSlice.actions;
