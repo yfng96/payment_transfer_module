@@ -62,3 +62,5 @@ A MirageJS server is integrated to simulate API responses during development. Th
 **UI Design & Time Management**  
 Designing the UI took more time than expected due to uncertainty in layout and flow. Extra effort went into refining the user experience, which initially slowed development
 
+**Demo Video**  
+https://drive.google.com/drive/folders/1VpIXWKhGb74UUJr412l44pSqoJVctAf6?usp=sharing
